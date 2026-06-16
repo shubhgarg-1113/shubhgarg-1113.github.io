@@ -7,7 +7,10 @@
       "date": "May 2026",
       "link": "https://www.hackerrank.com/certificates/48109BBC2EB6",
       "image": "",
-      "skills": ["Python", "Programming Fundamentals"],
+      "skills": [
+        "Python",
+        "Programming Fundamentals"
+      ],
       "category": "Programming"
     },
     {
@@ -17,7 +20,9 @@
       "date": "May 2026",
       "link": "",
       "image": "",
-      "skills": ["C#"],
+      "skills": [
+        "C#"
+      ],
       "category": "Programming"
     },
     {
@@ -27,7 +32,10 @@
       "date": "May 2026",
       "link": "https://courses.cognitiveclass.ai/certificates/7945ce489abb48079b3a168b3a997b64",
       "image": "",
-      "skills": ["Python", "Data Science"],
+      "skills": [
+        "Python",
+        "Data Science"
+      ],
       "category": "Data Science"
     },
     {
@@ -37,7 +45,11 @@
       "date": "May 2026",
       "link": "https://courses.cognitiveclass.ai/certificates/eb700f5bb56b492a96e398fb986477ec",
       "image": "",
-      "skills": ["Python", "Data Analysis", "Pandas"],
+      "skills": [
+        "Python",
+        "Data Analysis",
+        "Pandas"
+      ],
       "category": "Data Science"
     },
     {
@@ -47,7 +59,10 @@
       "date": "May 2026",
       "link": "https://www.credly.com/badges/fd033f46-ea62-4239-b3d8-699b20c78775",
       "image": "",
-      "skills": ["Python", "Data Science"],
+      "skills": [
+        "Python",
+        "Data Science"
+      ],
       "category": "Data Science"
     },
     {
@@ -57,7 +72,10 @@
       "date": "May 2026",
       "link": "",
       "image": "",
-      "skills": ["Python", "Data Analysis"],
+      "skills": [
+        "Python",
+        "Data Analysis"
+      ],
       "category": "Data Science"
     },
     {
@@ -67,7 +85,9 @@
       "date": "May 2026",
       "link": "",
       "image": "",
-      "skills": ["Python"],
+      "skills": [
+        "Python"
+      ],
       "category": "Programming"
     },
     {
@@ -77,7 +97,11 @@
       "date": "June 2026",
       "link": "https://verify.skilljar.com/c/n7pe93ebm6eb",
       "image": "",
-      "skills": ["Artificial Intelligence", "AI Ethics", "LLMs"],
+      "skills": [
+        "Artificial Intelligence",
+        "AI Ethics",
+        "LLMs"
+      ],
       "category": "AI"
     },
     {
@@ -87,7 +111,11 @@
       "date": "June 2026",
       "link": "https://verify.skilljar.com/c/jszzswpkyz8r",
       "image": "",
-      "skills": ["Artificial Intelligence", "AI Strategy", "Prompt Engineering"],
+      "skills": [
+        "Artificial Intelligence",
+        "AI Strategy",
+        "Prompt Engineering"
+      ],
       "category": "AI"
     },
     {
@@ -97,7 +125,11 @@
       "date": "June 2026",
       "link": "https://www.datacamp.com/completed/statement-of-accomplishment/course/dd37714231bdc15b6023c1464d3ba40c8d67cddb",
       "image": "",
-      "skills": ["Claude Code", "AI-Assisted Development", "Prompt Engineering"],
+      "skills": [
+        "Claude Code",
+        "AI-Assisted Development",
+        "Prompt Engineering"
+      ],
       "category": "AI"
     },
     {
@@ -107,7 +139,10 @@
       "date": "June 2026",
       "link": "",
       "image": "",
-      "skills": ["Data Analytics", "Forensic Technology"],
+      "skills": [
+        "Data Analytics",
+        "Forensic Technology"
+      ],
       "category": "Simulation"
     },
     {
@@ -117,37 +152,37 @@
       "date": "June 2026",
       "link": "https://www.theforage.com/completion-certificates/tMjbs76F526fF5v3G/NjynCWzGSaWXQCxSX_tMjbs76F526fF5v3G_6a1eb4fbb7f842cbd891796b_1780411209592_completion_certificate.pdf",
       "image": "",
-      "skills": ["Data Science", "Predictive Modeling", "Data Visualization"],
+      "skills": [
+        "Data Science",
+        "Predictive Modeling",
+        "Data Visualization"
+      ],
       "category": "Simulation"
     },
     {
       "id": "13",
-      "name": "Start Writing Prompts like a Pro",
-      "issuer": "Google (Coursera)",
-      "date": "June 2026",
-      "link": "https://coursera.org/verify/3ZLUM3WIIRRA",
-      "image": "",
-      "skills": ["Prompt Engineering", "Generative AI"],
-      "category": "AI"
-    },
-    {
-      "id": "14",
       "name": "Google Prompting Essentials",
       "issuer": "Google (Coursera)",
       "date": "June 2026",
       "link": "https://coursera.org/verify/specialization/0EZFSIN999DY",
       "image": "",
-      "skills": ["Prompt Engineering", "Generative AI", "AI Tools"],
+      "skills": [
+        "Prompt Engineering",
+        "Generative AI",
+        "AI Tools"
+      ],
       "category": "AI"
     },
     {
-      "id": "15",
+      "id": "14",
       "name": "MATLAB Basics",
       "issuer": "MathWorks",
       "date": "",
       "link": "",
       "image": "",
-      "skills": ["MATLAB"],
+      "skills": [
+        "MATLAB"
+      ],
       "category": "Programming"
     }
   ]
