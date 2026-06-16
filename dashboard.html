@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Certificate Manager — Shubh Garg</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:#0f172a; --surface:#1e293b; --card:#0f172a;
+      --border:rgba(255,255,255,0.08); --text:#f8fafc; --muted:#94a3b8;
+      --primary:#3b82f6; --primary-h:#2563eb;
+      --success:#10b981; --danger:#ef4444; --danger-h:#dc2626;
+      --warn:#f59e0b;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);
+      padding:2rem;min-height:100vh}
+    .container{max-width:1200px;margin:0 auto}
+
+    /* HEADER */
+    header{display:flex;justify-content:space-between;align-items:center;
+      margin-bottom:2rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)}
+    .header-left h1{font-size:1.6rem;font-weight:700;margin-bottom:3px}
+    .header-left p{color:var(--muted);font-size:.85rem}
+    .header-actions{display:flex;gap:.75rem;align-items:center}
+
+    /* STATS BAR */
+    .stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+    .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;
+      padding:1.1rem 1.3rem}
+    .stat-num{font-size:1.8rem;font-weight:700;letter-spacing:-.02em}
+    .stat-label{font-size:.75rem;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.07em}
+    .stat-card.c-prog .stat-num{color:var(--primary)}
+    .stat-card.c-ds .stat-num{color:#a78bfa}
+    .stat-card.c-ai .stat-num{color:var(--success)}
+    .stat-card.c-sim .stat-num{color:var(--warn)}
+
+    /* MAIN LAYOUT */
+    .main-content{display:grid;grid-template-columns:380px 1fr;gap:1.5rem;align-items:start}
+
+    /* CARD */
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.75rem}
+    .card h2{font-size:1.1rem;font-weight:600;margin-bottom:1.5rem}
+
+    /* FORM */
+    .form-group{margin-bottom:1rem}
+    .form-group label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:5px;
+      text-transform:uppercase;letter-spacing:.06em}
+    .form-control{width:100%;background:var(--bg);border:1px solid var(--border);
+      border-radius:8px;padding:9px 12px;color:var(--text);font-family:inherit;
+      font-size:.9rem;outline:none;transition:border-color .2s}
+    .form-control:focus{border-color:var(--primary)}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+    .form-actions{display:flex;gap:.75rem;margin-top:1.5rem}
+
+    /* BUTTONS */
+    .btn{display:inline-flex;align-items:center;gap:.4rem;padding:.55rem 1.1rem;
+      border-radius:8px;border:none;font-family:inherit;font-weight:500;
+      font-size:.88rem;cursor:pointer;transition:all .2s}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-h)}
+    .btn-success{background:var(--success);color:#fff}
+    .btn-success:hover{background:#059669}
+    .btn-danger{background:rgba(239,68,68,.12);color:var(--danger);
+      border:1px solid rgba(239,68,68,.2)}
+    .btn-danger:hover{background:var(--danger);color:#fff}
+    .btn-outline{background:transparent;color:var(--text);border:1px solid var(--border)}
+    .btn-outline:hover{background:rgba(255,255,255,.05)}
+    .btn-sm{padding:.35rem .75rem;font-size:.78rem}
+    .btn-icon{padding:.45rem .55rem;font-size:.85rem}
+    .btn-full{width:100%;justify-content:center}
+
+    /* SEARCH & FILTER */
+    .list-controls{display:flex;gap:.75rem;margin-bottom:1.25rem;align-items:center;flex-wrap:wrap}
+    .search-input{flex:1;min-width:160px;background:var(--bg);border:1px solid var(--border);
+      border-radius:8px;padding:8px 12px;color:var(--text);font-family:inherit;
+      font-size:.85rem;outline:none;transition:border-color .2s}
+    .search-input:focus{border-color:var(--primary)}
+    .filter-select{background:var(--bg);border:1px solid var(--border);border-radius:8px;
+      padding:8px 10px;color:var(--text);font-family:inherit;font-size:.85rem;outline:none}
+
+    /* CERT LIST */
+    .cert-list{display:flex;flex-direction:column;gap:.6rem;max-height:580px;
+      overflow-y:auto;padding-right:4px}
+    .cert-list::-webkit-scrollbar{width:4px}
+    .cert-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+    .cert-item{display:flex;align-items:center;gap:1rem;
+      background:var(--card);border:1px solid var(--border);
+      border-radius:10px;padding:.85rem 1rem;transition:border-color .2s}
+    .cert-item:hover{border-color:rgba(59,130,246,.3)}
+    .cert-item.editing{border-color:var(--primary);background:rgba(59,130,246,.05)}
+    .cert-initials{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;
+      justify-content:center;font-size:.78rem;font-weight:700;flex-shrink:0}
+    .cert-info{flex:1;min-width:0}
+    .cert-info h4{font-size:.9rem;font-weight:600;white-space:nowrap;
+      overflow:hidden;text-overflow:ellipsis}
+    .cert-info p{font-size:.75rem;color:var(--muted);margin-top:1px}
+    .cert-meta{display:flex;align-items:center;gap:.4rem;margin-top:3px}
+    .cert-cat-badge{font-size:.65rem;padding:2px 7px;border-radius:4px;
+      background:rgba(255,255,255,.07);color:var(--muted)}
+    .cert-has-link{font-size:.65rem;color:var(--success)}
+    .cert-actions{display:flex;gap:.4rem;flex-shrink:0}
+    .empty-state{text-align:center;padding:2.5rem 1rem;color:var(--muted)}
+    .empty-state .empty-icon{font-size:2.5rem;margin-bottom:.75rem}
+
+    /* CAT COLORS */
+    .cat-prog{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.2)}
+    .cat-ds{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.2)}
+    .cat-ai{background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.2)}
+    .cat-sim{background:rgba(245,158,11,.12);color:#fbbf24;border:1px solid rgba(245,158,11,.2)}
+    .cat-default{background:rgba(148,163,184,.12);color:#94a3b8;border:1px solid rgba(148,163,184,.2)}
+
+    /* FILE UPLOAD */
+    .file-upload-wrapper{position:relative;overflow:hidden;display:inline-flex}
+    .file-upload-wrapper input[type=file]{position:absolute;left:0;top:0;
+      width:100%;height:100%;opacity:0;cursor:pointer;font-size:0}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:2rem;right:2rem;padding:.85rem 1.5rem;
+      border-radius:10px;font-weight:500;font-size:.9rem;
+      transform:translateY(150%);transition:transform .3s cubic-bezier(.68,-.55,.265,1.55);
+      z-index:1000;display:flex;align-items:center;gap:.5rem}
+    .toast.success{background:#10b981;color:#fff}
+    .toast.error{background:#ef4444;color:#fff}
+    .toast.show{transform:translateY(0)}
+
+    /* MODAL */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);
+      backdrop-filter:blur(4px);z-index:500;display:none;
+      align-items:center;justify-content:center}
+    .modal-overlay.open{display:flex}
+    .modal{background:var(--surface);border:1px solid var(--border);
+      border-radius:16px;padding:2rem;width:90%;max-width:420px}
+    .modal h3{font-size:1.1rem;margin-bottom:.5rem}
+    .modal p{color:var(--muted);font-size:.88rem;margin-bottom:1.5rem}
+    .modal-actions{display:flex;gap:.75rem;justify-content:flex-end}
+
+    /* BACK LINK */
+    .back-link{display:inline-flex;align-items:center;gap:.4rem;
+      color:var(--muted);font-size:.82rem;margin-bottom:1.5rem;
+      text-decoration:none;transition:color .2s}
+    .back-link:hover{color:var(--text)}
+
+    @media(max-width:800px){
+      .main-content{grid-template-columns:1fr}
+      .stats-bar{grid-template-columns:repeat(2,1fr)}
+      .form-row{grid-template-columns:1fr}
+    }
+    @media(max-width:480px){
+      body{padding:1rem}
+      header{flex-direction:column;align-items:flex-start;gap:1rem}
+      .stats-bar{grid-template-columns:1fr 1fr}
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <a href="index.html" class="back-link">← Back to Portfolio</a>
+
+  <header>
+    <div class="header-left">
+      <h1>📋 Certificate Manager</h1>
+      <p>Add, edit, and export your <code>certificates.json</code></p>
+    </div>
+    <div class="header-actions">
+      <div class="file-upload-wrapper">
+        <button class="btn btn-outline">📥 Import JSON</button>
+        <input type="file" id="importFile" accept=".json"/>
+      </div>
+      <button class="btn btn-success" id="exportBtn">📤 Export JSON</button>
+    </div>
+  </header>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-card c-prog">
+      <div class="stat-num" id="stat-total">0</div>
+      <div class="stat-label">Total Certs</div>
+    </div>
+    <div class="stat-card c-ds">
+      <div class="stat-num" id="stat-ds">0</div>
+      <div class="stat-label">Data Science</div>
+    </div>
+    <div class="stat-card c-ai">
+      <div class="stat-num" id="stat-ai">0</div>
+      <div class="stat-label">AI</div>
+    </div>
+    <div class="stat-card c-sim">
+      <div class="stat-num" id="stat-prog">0</div>
+      <div class="stat-label">Programming</div>
+    </div>
+  </div>
+
+  <div class="main-content">
+
+    <!-- FORM -->
+    <div class="card">
+      <h2 id="formTitle">➕ Add Certificate</h2>
+      <form id="certForm">
+        <input type="hidden" id="certId"/>
+        <div class="form-group">
+          <label>Certificate Name *</label>
+          <input type="text" id="name" class="form-control" required placeholder="e.g. Python (Basic)"/>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Issuer *</label>
+            <input type="text" id="issuer" class="form-control" required placeholder="e.g. HackerRank"/>
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select id="category" class="form-control filter-select" style="width:100%">
+              <option value="">Select...</option>
+              <option value="Programming">Programming</option>
+              <option value="Data Science">Data Science</option>
+              <option value="AI">AI</option>
+              <option value="Simulation">Simulation</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="text" id="date" class="form-control" placeholder="e.g. June 2026"/>
+        </div>
+        <div class="form-group">
+          <label>Credential Link</label>
+          <input type="url" id="link" class="form-control" placeholder="https://..."/>
+        </div>
+        <div class="form-group">
+          <label>Skills (comma separated)</label>
+          <input type="text" id="skills" class="form-control" placeholder="Python, Data Analysis"/>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary btn-full" id="submitBtn">Save Certificate</button>
+          <button type="button" class="btn btn-outline" id="cancelBtn" style="display:none">Cancel</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- LIST -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+        <h2 style="margin-bottom:0">Certificates (<span id="certCount">0</span>)</h2>
+      </div>
+      <div class="list-controls">
+        <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search certificates..."/>
+        <select class="filter-select" id="filterCat">
+          <option value="">All categories</option>
+          <option value="Programming">Programming</option>
+          <option value="Data Science">Data Science</option>
+          <option value="AI">AI</option>
+          <option value="Simulation">Simulation</option>
+        </select>
+      </div>
+      <div class="cert-list" id="certList">
+        <div class="empty-state">
+          <div class="empty-icon">📂</div>
+          <p>No certificates loaded.</p>
+          <p style="font-size:.82rem;margin-top:.4rem">Click <strong>Import JSON</strong> to load your file,<br>or add certificates using the form.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <h3>Delete Certificate?</h3>
+    <p id="deleteModalMsg">This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let certificates = [];
+let editMode = false;
+let pendingDeleteId = null;
+
+const catColors = {
+  'Programming': 'cat-prog',
+  'Data Science': 'cat-ds',
+  'AI': 'cat-ai',
+  'Simulation': 'cat-sim'
+};
+
+function getInitials(name) {
+  if (!name) return '?';
+  const words = name.replace(/[^a-zA-Z ]/g, '').trim().split(' ');
+  if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+  return name.substring(0, 2).toUpperCase();
+}
+
+function hashColor(str) {
+  const colors = ['cat-prog','cat-ds','cat-ai','cat-sim'];
+  let h = 0;
+  for (let i = 0; i < str.length; i++) h = str.charCodeAt(i) + ((h << 5) - h);
+  return colors[Math.abs(h) % colors.length];
+}
+
+// Auto-load certificates.json if on server
+fetch('certificates.json')
+  .then(r => r.json())
+  .then(data => {
+    if (data.certificates) {
+      certificates = data.certificates;
+      renderList();
+      updateStats();
+      showToast('✅ Loaded certificates.json', 'success');
+    }
+  })
+  .catch(() => {});
+
+// Import
+document.getElementById('importFile').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.certificates) {
+        certificates = data.certificates;
+        renderList();
+        updateStats();
+        showToast('✅ Imported ' + certificates.length + ' certificates', 'success');
+      } else {
+        showToast('❌ Invalid JSON format', 'error');
+      }
+    } catch {
+      showToast('❌ Error parsing JSON', 'error');
+    }
+  };
+  reader.readAsText(file);
+  this.value = '';
+});
+
+// Export
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const str = JSON.stringify({ certificates }, null, 2);
+  const uri = 'data:application/json;charset=utf-8,' + encodeURIComponent(str);
+  const a = document.createElement('a');
+  a.setAttribute('href', uri);
+  a.setAttribute('download', 'certificates.json');
+  a.click();
+  showToast('📤 Exported certificates.json', 'success');
+});
+
+// Form submit
+document.getElementById('certForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const skillsRaw = document.getElementById('skills').value;
+  const skillsArr = skillsRaw ? skillsRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const data = {
+    id: document.getElementById('certId').value || Date.now().toString(),
+    name: document.getElementById('name').value.trim(),
+    issuer: document.getElementById('issuer').value.trim(),
+    date: document.getElementById('date').value.trim(),
+    link: document.getElementById('link').value.trim(),
+    image: '',
+    skills: skillsArr,
+    category: document.getElementById('category').value
+  };
+  if (editMode) {
+    const idx = certificates.findIndex(c => c.id === data.id);
+    if (idx !== -1) certificates[idx] = data;
+    showToast('✏️ Certificate updated', 'success');
+  } else {
+    certificates.unshift(data);
+    showToast('✅ Certificate added', 'success');
+  }
+  resetForm();
+  renderList();
+  updateStats();
+});
+
+document.getElementById('cancelBtn').addEventListener('click', resetForm);
+
+// Search + filter
+document.getElementById('searchInput').addEventListener('input', renderList);
+document.getElementById('filterCat').addEventListener('change', renderList);
+
+function getFiltered() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const cat = document.getElementById('filterCat').value;
+  return certificates.filter(c => {
+    const matchQ = !q || c.name.toLowerCase().includes(q) || c.issuer.toLowerCase().includes(q);
+    const matchCat = !cat || c.category === cat;
+    return matchQ && matchCat;
+  });
+}
+
+function renderList() {
+  const list = document.getElementById('certList');
+  const filtered = getFiltered();
+  document.getElementById('certCount').textContent = filtered.length;
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><p>No certificates found.</p></div>`;
+    return;
+  }
+  list.innerHTML = filtered.map(cert => {
+    const cc = catColors[cert.category] || hashColor(cert.issuer || '');
+    const initials = getInitials(cert.issuer);
+    const editingClass = (editMode && document.getElementById('certId').value === cert.id) ? 'editing' : '';
+    return `
+      <div class="cert-item ${editingClass}" id="item-${cert.id}">
+        <div class="cert-initials ${cc}">${initials}</div>
+        <div class="cert-info">
+          <h4>${cert.name}</h4>
+          <p>${cert.issuer}${cert.date ? ' · ' + cert.date : ''}</p>
+          <div class="cert-meta">
+            ${cert.category ? `<span class="cert-cat-badge">${cert.category}</span>` : ''}
+            ${cert.link ? `<span class="cert-has-link">🔗 link</span>` : ''}
+          </div>
+        </div>
+        <div class="cert-actions">
+          <button onclick="editCert('${cert.id}')" class="btn btn-outline btn-sm">Edit</button>
+          <button onclick="promptDelete('${cert.id}','${cert.name.replace(/'/g,'')}')" class="btn btn-danger btn-sm">✕</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function editCert(id) {
+  const cert = certificates.find(c => c.id === id);
+  if (!cert) return;
+  document.getElementById('certId').value = cert.id;
+  document.getElementById('name').value = cert.name;
+  document.getElementById('issuer').value = cert.issuer;
+  document.getElementById('date').value = cert.date || '';
+  document.getElementById('link').value = cert.link || '';
+  document.getElementById('category').value = cert.category || '';
+  document.getElementById('skills').value = (cert.skills || []).join(', ');
+  document.getElementById('formTitle').textContent = '✏️ Edit Certificate';
+  document.getElementById('cancelBtn').style.display = 'block';
+  document.getElementById('submitBtn').textContent = 'Update Certificate';
+  editMode = true;
+  renderList();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function promptDelete(id, name) {
+  pendingDeleteId = id;
+  document.getElementById('deleteModalMsg').textContent = `Delete "${name}"? This cannot be undone.`;
+  document.getElementById('deleteModal').classList.add('open');
+}
+
+function closeDeleteModal() {
+  pendingDeleteId = null;
+  document.getElementById('deleteModal').classList.remove('open');
+}
+
+document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+  if (!pendingDeleteId) return;
+  certificates = certificates.filter(c => c.id !== pendingDeleteId);
+  if (document.getElementById('certId').value === pendingDeleteId) resetForm();
+  renderList();
+  updateStats();
+  closeDeleteModal();
+  showToast('🗑️ Certificate deleted', 'success');
+});
+
+document.getElementById('deleteModal').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeDeleteModal();
+});
+
+function resetForm() {
+  document.getElementById('certForm').reset();
+  document.getElementById('certId').value = '';
+  document.getElementById('formTitle').textContent = '➕ Add Certificate';
+  document.getElementById('cancelBtn').style.display = 'none';
+  document.getElementById('submitBtn').textContent = 'Save Certificate';
+  editMode = false;
+  renderList();
+}
+
+function updateStats() {
+  document.getElementById('stat-total').textContent = certificates.length;
+  document.getElementById('stat-ds').textContent = certificates.filter(c => c.category === 'Data Science').length;
+  document.getElementById('stat-ai').textContent = certificates.filter(c => c.category === 'AI').length;
+  document.getElementById('stat-prog').textContent = certificates.filter(c => c.category === 'Programming').length;
+}
+
+let toastTimeout;
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
